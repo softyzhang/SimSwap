@@ -68,7 +68,7 @@ class Predictor(cog.Predictor):
             img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2])
 
             # convert numpy to tensor
-            img_id = img_id.cuda()
+            img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
             # create latent id
             img_id_downsample = F.interpolate(img_id, size=(112,112))
@@ -85,7 +85,7 @@ class Predictor(cog.Predictor):
             b_align_crop_tenor_list = []
 
             for b_align_crop in img_b_align_crop_list:
-                b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop, cv2.COLOR_BGR2RGB))[None, ...].cuda()
+                b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop, cv2.COLOR_BGR2RGB))[None, ...].to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
                 swap_result = model(None, b_align_crop_tenor, latend_id, None, True)[0]
                 swap_result_list.append(swap_result)

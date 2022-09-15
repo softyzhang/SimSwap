@@ -41,13 +41,13 @@ class fsModel(BaseModel):
 
         # Generator network
         self.netG = Generator_Adain_Upsample(input_nc=3, output_nc=3, latent_size=512, n_blocks=9, deep=opt.Gdeep)
-        self.netG.cuda()
+        self.netG.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
         # Id network
         netArc_checkpoint = opt.Arc_path
         netArc_checkpoint = torch.load(netArc_checkpoint, map_location=torch.device("cpu"))
         self.netArc = netArc_checkpoint['model'].module
-        self.netArc = self.netArc.cuda()
+        self.netArc = self.netArc.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         self.netArc.eval()
         self.netArc.requires_grad_(False)
         if not self.isTrain:
@@ -56,7 +56,7 @@ class fsModel(BaseModel):
             return
         self.netD = ProjectedDiscriminator(diffaug=False, interp224=False, **{})
         # self.netD.feature_network.requires_grad_(False)
-        self.netD.cuda()
+        self.netD.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
 
         if self.isTrain:

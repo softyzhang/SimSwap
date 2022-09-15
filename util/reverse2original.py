@@ -59,7 +59,7 @@ class SoftErosion(nn.Module):
 def postprocess(swapped_face, target, target_mask,smooth_mask):
     # target_mask = cv2.resize(target_mask, (self.size,  self.size))
 
-    mask_tensor = torch.from_numpy(target_mask.copy().transpose((2, 0, 1))).float().mul_(1/255.0).cuda()
+    mask_tensor = torch.from_numpy(target_mask.copy().transpose((2, 0, 1))).float().mul_(1/255.0).to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
     face_mask_tensor = mask_tensor[0] + mask_tensor[1]
     
     soft_face_mask_tensor, _ = smooth_mask(face_mask_tensor.unsqueeze_(0).unsqueeze_(0))
@@ -78,7 +78,7 @@ def reverse2wholeimage(b_align_crop_tenor_list,swaped_imgs, mats, crop_size, ori
     target_image_list = []
     img_mask_list = []
     if use_mask:
-        smooth_mask = SoftErosion(kernel_size=17, threshold=0.9, iterations=7).cuda()
+        smooth_mask = SoftErosion(kernel_size=17, threshold=0.9, iterations=7).to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
     else:
         pass
 

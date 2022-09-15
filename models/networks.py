@@ -194,7 +194,7 @@ class GANLoss(nn.Module):
 class VGGLoss(nn.Module):
     def __init__(self, gpu_ids):
         super(VGGLoss, self).__init__()        
-        self.vgg = Vgg19().cuda()
+        self.vgg = Vgg19().to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         self.criterion = nn.L1Loss()
         self.weights = [1.0/32, 1.0/16, 1.0/8, 1.0/4, 1.0]        
 
@@ -357,11 +357,11 @@ class SpecificNorm(nn.Module):
         """
         super(SpecificNorm, self).__init__()
         self.mean = np.array([0.485, 0.456, 0.406])
-        self.mean = torch.from_numpy(self.mean).float().cuda()
+        self.mean = torch.from_numpy(self.mean).float().to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         self.mean = self.mean.view([1, 3, 1, 1])
 
         self.std = np.array([0.229, 0.224, 0.225])
-        self.std = torch.from_numpy(self.std).float().cuda()
+        self.std = torch.from_numpy(self.std).float().to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         self.std = self.std.view([1, 3, 1, 1])
 
     def forward(self, x):

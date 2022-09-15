@@ -62,7 +62,7 @@ if __name__ == '__main__':
     logoclass = watermark_image('./simswaplogo/simswaplogo.png')
     model = create_model(opt)
     model.eval()
-    mse = torch.nn.MSELoss().cuda()
+    mse = torch.nn.MSELoss().to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
     spNorm =SpecificNorm()
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             specific_person = transformer_Arcface(specific_person_align_crop_pil)
             specific_person = specific_person.view(-1, specific_person.shape[0], specific_person.shape[1], specific_person.shape[2])
             # convert numpy to tensor
-            specific_person = specific_person.cuda()
+            specific_person = specific_person.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
             #create latent id
             specific_person_downsample = F.interpolate(specific_person, size=(112,112))
             specific_person_id_nonorm = model.netArc(specific_person_downsample)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
             img_a = transformer_Arcface(img_a_align_crop_pil)
             img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2])
             # convert numpy to tensor
-            img_id = img_id.cuda()
+            img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
             #create latent id
             img_id_downsample = F.interpolate(img_id, size=(112,112))
             latend_id = model.netArc(img_id_downsample)
@@ -125,7 +125,7 @@ if __name__ == '__main__':
         b_align_crop_tenor_list = []
         for b_align_crop in img_b_align_crop_list:
 
-            b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop,cv2.COLOR_BGR2RGB))[None,...].cuda()
+            b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop,cv2.COLOR_BGR2RGB))[None,...].to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
             b_align_crop_tenor_arcnorm = spNorm(b_align_crop_tenor)
             b_align_crop_tenor_arcnorm_downsample = F.interpolate(b_align_crop_tenor_arcnorm, size=(112,112))
@@ -158,9 +158,9 @@ if __name__ == '__main__':
             if opt.use_mask:
                 n_classes = 19
                 net = BiSeNet(n_classes=n_classes)
-                net.cuda()
+                net.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
                 save_pth = os.path.join('./parsing_model/checkpoint', '79999_iter.pth')
-                net.load_state_dict(torch.load(save_pth))
+                net.load_state_dict(torch.load(save_pth)) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu')))
                 net.eval()
             else:
                 net =None

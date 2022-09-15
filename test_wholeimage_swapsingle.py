@@ -65,7 +65,7 @@ if __name__ == '__main__':
         img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2])
 
         # convert numpy to tensor
-        img_id = img_id.cuda()
+        img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
         #create latent id
         img_id_downsample = F.interpolate(img_id, size=(112,112))
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
         for b_align_crop in img_b_align_crop_list:
 
-            b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop,cv2.COLOR_BGR2RGB))[None,...].cuda()
+            b_align_crop_tenor = _totensor(cv2.cvtColor(b_align_crop,cv2.COLOR_BGR2RGB))[None,...].to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
             swap_result = model(None, b_align_crop_tenor, latend_id, None, True)[0]
             swap_result_list.append(swap_result)
@@ -95,9 +95,9 @@ if __name__ == '__main__':
         if opt.use_mask:
             n_classes = 19
             net = BiSeNet(n_classes=n_classes)
-            net.cuda()
+            net.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
             save_pth = os.path.join('./parsing_model/checkpoint', '79999_iter.pth')
-            net.load_state_dict(torch.load(save_pth))
+            net.load_state_dict(torch.load(save_pth)) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu')))
             net.eval()
         else:
             net =None

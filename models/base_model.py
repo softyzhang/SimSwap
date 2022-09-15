@@ -44,7 +44,7 @@ class BaseModel(torch.nn.Module):
         save_path = os.path.join(self.save_dir, save_filename)
         torch.save(network.cpu().state_dict(), save_path)
         if torch.cuda.is_available():
-            network.cuda()
+            network.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
     def save_optim(self, network, network_label, epoch_label, gpu_ids=None):
         save_filename = '{}_optim_{}.pth'.format(epoch_label, network_label)

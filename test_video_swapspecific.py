@@ -74,8 +74,8 @@ if __name__ == '__main__':
         # img_att = img_b.view(-1, img_b.shape[0], img_b.shape[1], img_b.shape[2])
 
         # convert numpy to tensor
-        img_id = img_id.cuda()
-        # img_att = img_att.cuda()
+        img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
+        # img_att = img_att.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
         #create latent id
         img_id_downsample = F.interpolate(img_id, size=(112,112))
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         specific_person_align_crop_pil = Image.fromarray(cv2.cvtColor(specific_person_align_crop[0],cv2.COLOR_BGR2RGB)) 
         specific_person = transformer_Arcface(specific_person_align_crop_pil)
         specific_person = specific_person.view(-1, specific_person.shape[0], specific_person.shape[1], specific_person.shape[2])
-        specific_person = specific_person.cuda()
+        specific_person = specific_person.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         specific_person_downsample = F.interpolate(specific_person, size=(112,112))
         specific_person_id_nonorm = model.netArc(specific_person_downsample)
 

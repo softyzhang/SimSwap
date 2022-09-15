@@ -274,9 +274,9 @@ class BiSeNet(nn.Module):
 
 if __name__ == "__main__":
     net = BiSeNet(19)
-    net.cuda()
+    net.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
     net.eval()
-    in_ten = torch.randn(16, 3, 640, 480).cuda()
+    in_ten = torch.randn(16, 3, 640, 480).to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
     out, out16, out32 = net(in_ten)
     print(out.shape)
 

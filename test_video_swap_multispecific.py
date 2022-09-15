@@ -64,7 +64,7 @@ if __name__ == '__main__':
             specific_person = transformer_Arcface(specific_person_align_crop_pil)
             specific_person = specific_person.view(-1, specific_person.shape[0], specific_person.shape[1], specific_person.shape[2])
             # convert numpy to tensor
-            specific_person = specific_person.cuda()
+            specific_person = specific_person.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
             #create latent id
             specific_person_downsample = F.interpolate(specific_person, size=(112,112))
             specific_person_id_nonorm = model.netArc(specific_person_downsample)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
             img_a = transformer_Arcface(img_a_align_crop_pil)
             img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2])
             # convert numpy to tensor
-            img_id = img_id.cuda()
+            img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
             #create latent id
             img_id_downsample = F.interpolate(img_id, size=(112,112))
             latend_id = model.netArc(img_id_downsample)

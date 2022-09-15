@@ -48,14 +48,14 @@ def video_swap(video_path, target_id_norm_list,source_specific_id_nonorm_list,id
             shutil.rmtree(temp_results_dir)
 
     spNorm =SpecificNorm()
-    mse = torch.nn.MSELoss().cuda()
+    mse = torch.nn.MSELoss().to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
     if use_mask:
         n_classes = 19
         net = BiSeNet(n_classes=n_classes)
-        net.cuda()
+        net.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
         save_pth = os.path.join('./parsing_model/checkpoint', '79999_iter.pth')
-        net.load_state_dict(torch.load(save_pth))
+        net.load_state_dict(torch.load(save_pth)) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu'))) if torch.cuda.is_available() else net.load_state_dict(torch.load(save_pth, map_location=torch.device('cpu')))
         net.eval()
     else:
         net =None
@@ -80,7 +80,7 @@ def video_swap(video_path, target_id_norm_list,source_specific_id_nonorm_list,id
                     # BGR TO RGB
                     # frame_align_crop_RGB = frame_align_crop[...,::-1]
 
-                    frame_align_crop_tenor = _totensor(cv2.cvtColor(frame_align_crop,cv2.COLOR_BGR2RGB))[None,...].cuda()
+                    frame_align_crop_tenor = _totensor(cv2.cvtColor(frame_align_crop,cv2.COLOR_BGR2RGB))[None,...].to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
                     frame_align_crop_tenor_arcnorm = spNorm(frame_align_crop_tenor)
                     frame_align_crop_tenor_arcnorm_downsample = F.interpolate(frame_align_crop_tenor_arcnorm, size=(112,112))

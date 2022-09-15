@@ -74,8 +74,8 @@ if __name__ == '__main__':
         # img_att = img_b.view(-1, img_b.shape[0], img_b.shape[1], img_b.shape[2])
 
         # convert numpy to tensor
-        img_id = img_id.cuda()
-        # img_att = img_att.cuda()
+        img_id = img_id.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
+        # img_att = img_att.to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'))
 
         #create latent id
         img_id_downsample = F.interpolate(img_id, size=(112,112))

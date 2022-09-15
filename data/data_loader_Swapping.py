@@ -11,8 +11,8 @@ class data_prefetcher():
         self.loader = loader
         self.dataiter = iter(loader)
         self.stream = torch.cuda.Stream()
-        self.mean = torch.tensor([0.485, 0.456, 0.406]).cuda().view(1,3,1,1)
-        self.std = torch.tensor([0.229, 0.224, 0.225]).cuda().view(1,3,1,1)
+        self.mean = torch.tensor([0.485, 0.456, 0.406]).to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')).view(1,3,1,1)
+        self.std = torch.tensor([0.229, 0.224, 0.225]).to(torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')).view(1,3,1,1)
         # With Amp, it isn't necessary to manually convert data to half.
         # if args.fp16:
         #     self.mean = self.mean.half()
